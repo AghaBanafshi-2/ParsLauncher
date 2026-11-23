@@ -1,0 +1,118 @@
+name: ParsLauncher Android Debug
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - parslauncher-purple-ui
+      - v3_openjdk
+  pull_request:
+    branches:
+      - v3_openjdk
+
+permissions:
+  contents: read
+
+jobs:
+  build-arm64-debug:
+    name: Build ARM64 Debug APK
+    runs-on: ubuntu-22.04
+    env:
+      CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+
+      - name: Install Android NDK and build tools
+        run: |
+          sdkmanager "ndk;25.2.9519653" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Download LTW
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget -q https://github.com/PojavLauncherTeam/LTW/releases/latest/download/ltw-release.aar \
+            -O app_pojavlauncher/libs/ltw-release.aar
+
+      - name: Download Java runtimes
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          workflow: build.yml
+          path: app_pojavlauncher/src/main/assets/components/jre
+          workflow_conclusion: success
+          repo: PojavLauncherTeam/android-openjdk-build-multiarch
+          branch: buildjre8
+          name: jre8-pojav
+
+      - name: Download Java 17 runtime
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          workflow: build.yml
+          path: app_pojavlauncher/src/main/assets/components/jre-new
+          workflow_conclusion: success
+          repo: PojavLauncherTeam/android-openjdk-build-multiarch
+          branch: buildjre17-21
+          name: jre17-pojav
+
+      - name: Download Java 21 runtime
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          workflow: build.yml
+          path: app_pojavlauncher/src/main/assets/components/jre-21
+          workflow_conclusion: success
+          repo: PojavLauncherTeam/android-openjdk-build-multiarch
+          branch: buildjre17-21
+          name: jre21-pojav
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11'
+
+      - name: Build launcher support modules
+        run: |
+          ./scripts/languagelist_updater.sh
+          mkdir -p out
+          gradle :jre_lwjgl3glfw:build --no-daemon
+
+      - name: Set up JDK 17 for Android build
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Assemble ARM64 debug APK
+        run: |
+          gradle :app_pojavlauncher:assembleDebug --no-daemon -Pandroid.injected.build.abi=arm64-v8a
+          APK="app_pojavlauncher/build/outputs/apk/debug/app_pojavlauncher-debug.apk"
+          test -s "$APK"
+          mkdir -p dist
+          cp "$APK" dist/ParsLauncher-arm64x-debug.apk
+
+      - name: Package the APK as a single-file ZIP
+        run: |
+          cd dist
+          zip -q ParsLauncher-arm64x-debug.zip ParsLauncher-arm64x-debug.apk
+          test "$(unzip -Z1 ParsLauncher-arm64x-debug.zip | wc -l)" -eq 1
+          test "$(unzip -Z1 ParsLauncher-arm64x-debug.zip)" = "ParsLauncher-arm64x-debug.apk"
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ParsLauncher-arm64x-debug
+          path: dist/ParsLauncher-arm64x-debug.zip
+          if-no-files-found: error
+          compression-level: 0
