@@ -68,12 +68,28 @@ jobs:
       # artifact workflows currently have no downloadable successful runs.
       # Users can install a compatible Java runtime from the launcher's runtime manager.
       - name: Assemble ARM64 debug APK
+        shell: bash
         run: |
+          set -euo pipefail
           gradle :app_pojavlauncher:assembleDebug --no-daemon -Pandroid.injected.build.abi=arm64-v8a
-          APK="app_pojavlauncher/build/outputs/apk/debug/app_pojavlauncher-debug.apk"
-          test -s "$APK"
+
+          APK="$(find app_pojavlauncher/build/outputs/apk -type f -name '*.apk' -print -quit)"
+          if [[ -z "$APK" || ! -s "$APK" ]]; then
+            echo "::error::Gradle completed but no APK was found under app_pojavlauncher/build/outputs/apk"
+            find app_pojavlauncher/build/outputs -maxdepth 5 -type f -print || true
+            exit 1
+          fi
+
+          if ! unzip -l "$APK" | grep -q 'lib/arm64-v8a/'; then
+            echo "::error::The generated APK does not contain ARM64 native libraries: $APK"
+            unzip -l "$APK" | grep 'lib/' || true
+            exit 1
+          fi
+
           mkdir -p dist
           cp "$APK" dist/ParsLauncher-arm64x-debug.apk
+          echo "Packaged source APK: $APK"
+          ls -lh dist/ParsLauncher-arm64x-debug.apk
 
       - name: Package the APK as a single-file ZIP
         run: |
