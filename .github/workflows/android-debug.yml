@@ -110,17 +110,10 @@ jobs:
           echo "Packaged source APK: $APK"
           ls -lh dist/ParsLauncher-arm64x-debug.apk
 
-      - name: Package the APK as a single-file ZIP
-        run: |
-          cd dist
-          zip -q ParsLauncher-arm64x-debug.zip ParsLauncher-arm64x-debug.apk
-          test "$(unzip -Z1 ParsLauncher-arm64x-debug.zip | wc -l)" -eq 1
-          test "$(unzip -Z1 ParsLauncher-arm64x-debug.zip)" = "ParsLauncher-arm64x-debug.apk"
-
       - name: Upload ZIP artifact
         uses: actions/upload-artifact@v4
         with:
           name: ParsLauncher-arm64x-debug
-          path: dist/ParsLauncher-arm64x-debug.zip
+          path: dist/ParsLauncher-arm64x-debug.apk
           if-no-files-found: error
           compression-level: 0
