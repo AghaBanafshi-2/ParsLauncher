@@ -47,36 +47,37 @@ jobs:
           wget -q https://github.com/PojavLauncherTeam/LTW/releases/latest/download/ltw-release.aar \
             -O app_pojavlauncher/libs/ltw-release.aar
 
-      # Bundle the official Android ARM64 runtimes used by PojavLauncher.
-      - name: Download Java 8 runtime
-        uses: dawidd6/action-download-artifact@v9
-        with:
-          workflow: build.yml
-          path: app_pojavlauncher/src/main/assets/components/jre
-          workflow_conclusion: success
-          repo: PojavLauncherTeam/android-openjdk-build-multiarch
-          branch: buildjre8
-          name: jre8-pojav
+      # Download the verified Android runtime bundles from MojoLauncher releases.
+      # The old PojavLauncherTeam repository is archived and no longer publishes Actions artifacts.
+      - name: Download and unpack Java 8 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p app_pojavlauncher/src/main/assets/components/jre
+          curl -fL --retry 3 \
+            https://github.com/MojoLauncher/android-openjdk-build-multiarch/releases/download/rolling/jre8-pojav.zip \
+            -o /tmp/jre8-pojav.zip
+          unzip -oq /tmp/jre8-pojav.zip -d app_pojavlauncher/src/main/assets/components/jre
 
-      - name: Download Java 17 runtime
-        uses: dawidd6/action-download-artifact@v9
-        with:
-          workflow: build.yml
-          path: app_pojavlauncher/src/main/assets/components/jre-new
-          workflow_conclusion: success
-          repo: PojavLauncherTeam/android-openjdk-build-multiarch
-          branch: buildjre17-21
-          name: jre17-pojav
+      - name: Download and unpack Java 17 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p app_pojavlauncher/src/main/assets/components/jre-new
+          curl -fL --retry 3 \
+            https://github.com/MojoLauncher/android-openjdk-build-multiarch/releases/download/rolling/jre17-pojav.zip \
+            -o /tmp/jre17-pojav.zip
+          unzip -oq /tmp/jre17-pojav.zip -d app_pojavlauncher/src/main/assets/components/jre-new
 
-      - name: Download Java 21 runtime
-        uses: dawidd6/action-download-artifact@v9
-        with:
-          workflow: build.yml
-          path: app_pojavlauncher/src/main/assets/components/jre-21
-          workflow_conclusion: success
-          repo: PojavLauncherTeam/android-openjdk-build-multiarch
-          branch: buildjre17-21
-          name: jre21-pojav
+      - name: Download and unpack Java 21 runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p app_pojavlauncher/src/main/assets/components/jre-21
+          curl -fL --retry 3 \
+            https://github.com/MojoLauncher/android-openjdk-build-multiarch/releases/download/rolling/jre21-pojav.zip \
+            -o /tmp/jre21-pojav.zip
+          unzip -oq /tmp/jre21-pojav.zip -d app_pojavlauncher/src/main/assets/components/jre-21
 
       - name: Verify bundled Java runtimes
         shell: bash
@@ -84,10 +85,13 @@ jobs:
           set -euo pipefail
           for runtime in jre jre-new jre-21; do
             dir="app_pojavlauncher/src/main/assets/components/$runtime"
-            if [[ ! -d "$dir" ]] || [[ -z "$(find "$dir" -type f -print -quit)" ]]; then
-              echo "::error::Java runtime assets missing or empty: $dir"
-              exit 1
-            fi
+            for archive in universal.tar.xz bin-arm64.tar.xz; do
+              if [[ ! -s "$dir/$archive" ]]; then
+                echo "::error::Required runtime archive missing: $dir/$archive"
+                find "$dir" -maxdepth 2 -type f -printf '%p (%s bytes)\\n' || true
+                exit 1
+              fi
+            done
             echo "Verified $runtime:"
             du -sh "$dir"
           done
