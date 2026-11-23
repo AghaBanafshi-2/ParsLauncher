@@ -47,6 +47,51 @@ jobs:
           wget -q https://github.com/PojavLauncherTeam/LTW/releases/latest/download/ltw-release.aar \
             -O app_pojavlauncher/libs/ltw-release.aar
 
+      # Bundle the official Android ARM64 runtimes used by PojavLauncher.
+      - name: Download Java 8 runtime
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          workflow: build.yml
+          path: app_pojavlauncher/src/main/assets/components/jre
+          workflow_conclusion: success
+          repo: PojavLauncherTeam/android-openjdk-build-multiarch
+          branch: buildjre8
+          name: jre8-pojav
+
+      - name: Download Java 17 runtime
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          workflow: build.yml
+          path: app_pojavlauncher/src/main/assets/components/jre-new
+          workflow_conclusion: success
+          repo: PojavLauncherTeam/android-openjdk-build-multiarch
+          branch: buildjre17-21
+          name: jre17-pojav
+
+      - name: Download Java 21 runtime
+        uses: dawidd6/action-download-artifact@v9
+        with:
+          workflow: build.yml
+          path: app_pojavlauncher/src/main/assets/components/jre-21
+          workflow_conclusion: success
+          repo: PojavLauncherTeam/android-openjdk-build-multiarch
+          branch: buildjre17-21
+          name: jre21-pojav
+
+      - name: Verify bundled Java runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for runtime in jre jre-new jre-21; do
+            dir="app_pojavlauncher/src/main/assets/components/$runtime"
+            if [[ ! -d "$dir" ]] || [[ -z "$(find "$dir" -type f -print -quit)" ]]; then
+              echo "::error::Java runtime assets missing or empty: $dir"
+              exit 1
+            fi
+            echo "Verified $runtime:"
+            du -sh "$dir"
+          done
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
@@ -110,7 +155,7 @@ jobs:
           echo "Packaged source APK: $APK"
           ls -lh dist/ParsLauncher-arm64x-debug.apk
 
-      - name: Upload ZIP artifact
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: ParsLauncher-arm64x-debug
