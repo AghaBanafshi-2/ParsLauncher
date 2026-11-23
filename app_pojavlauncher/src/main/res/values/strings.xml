@@ -431,7 +431,5 @@
     <string name="bta_installer_nightly_versions">Nightly BTA versions</string>
     <string name="newdl_extracting_native_libraries">Extracting native libraries (%d/%d)</string>
     <string name="toast_not_available_demo">This is not available in demo mode</string>
-    <string name="pars_appearance_category">ParsLauncher appearance</string>
-    <string name="pars_button_radius_title">Button corner radius</string>
-    <string name="pars_button_radius_summary">Adjust how rounded launcher buttons look (4–40 dp).</string>
+
 </resources>
