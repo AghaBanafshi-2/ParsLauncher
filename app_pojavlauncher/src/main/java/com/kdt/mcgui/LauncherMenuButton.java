@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
-
 import net.kdt.pojavlaunch.R;
 
 import fr.spse.extended_view.ExtendedButton;
@@ -35,11 +34,23 @@ public class LauncherMenuButton extends ExtendedButton implements SharedPreferen
         setSettings();
     }
 
-
-    @Override protected void onAttachedToWindow() { super.onAttachedToWindow(); android.content.SharedPreferences p = android.preference.PreferenceManager.getDefaultSharedPreferences(getContext()); p.registerOnSharedPreferenceChangeListener(this); applyGlassBackground(); if (getAlpha() == 1f) { setAlpha(0f); setTranslationY(12f); animate().alpha(1f).translationY(0f).setDuration(360).start(); } }
+    @Override protected void onAttachedToWindow() { super.onAttachedToWindow(); android.content.SharedPreferences p = android.preference.PreferenceManager.getDefaultSharedPreferences(getContext()); p.registerOnSharedPreferenceChangeListener(this); applyRoundedBackground(); if (getAlpha() == 1f) { setAlpha(0f); setTranslationY(12f); animate().alpha(1f).translationY(0f).setDuration(360).start(); } }
     @Override protected void onDetachedFromWindow() { android.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).unregisterOnSharedPreferenceChangeListener(this); super.onDetachedFromWindow(); }
-    @Override public void onSharedPreferenceChanged(SharedPreferences p, String key) { if ("pars_button_radius".equals(key)) applyGlassBackground(); }
-    private void applyGlassBackground() { int radius = android.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getInt("pars_button_radius", 22); GradientDrawable glass = new GradientDrawable(); glass.setShape(GradientDrawable.RECTANGLE); glass.setCornerRadius(radius * getResources().getDisplayMetrics().density); glass.setColor(Color.argb(190, 43, 27, 63)); glass.setStroke((int)(getResources().getDisplayMetrics().density), Color.argb(150, 177, 132, 255)); setBackground(new RippleDrawable(ColorStateList.valueOf(Color.argb(65, 190, 150, 255)), glass, null)); }
+    @Override public void onSharedPreferenceChanged(SharedPreferences p, String key) { if ("pars_button_radius".equals(key)) applyRoundedBackground(); }
+
+    private void applyRoundedBackground() {
+        int radius = android.preference.PreferenceManager.getDefaultSharedPreferences(getContext()).getInt("pars_button_radius", 22);
+        float density = getResources().getDisplayMetrics().density;
+        GradientDrawable background = new GradientDrawable();
+        background.setShape(GradientDrawable.RECTANGLE);
+        background.setCornerRadius(radius * density);
+        background.setColor(Color.rgb(43, 27, 63));
+        setBackground(new RippleDrawable(
+                ColorStateList.valueOf(Color.argb(65, 190, 150, 255)),
+                background,
+                null
+        ));
+    }
 
     /** Set style stuff */
     private void setSettings(){
@@ -57,6 +68,6 @@ public class LauncherMenuButton extends ExtendedButton implements SharedPreferen
         sizes[0] = resources.getDimensionPixelSize(R.dimen._30sdp);
         getExtendedViewData().setSizeCompounds(sizes);
         postProcessDrawables();
-        applyGlassBackground();
+        applyRoundedBackground();
     }
 }
