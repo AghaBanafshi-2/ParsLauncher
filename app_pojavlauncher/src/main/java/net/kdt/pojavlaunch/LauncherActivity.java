@@ -164,6 +164,8 @@ public class LauncherActivity extends BaseActivity {
     };
 
     private ActivityResultLauncher<String> mRequestNotificationPermissionLauncher;
+    private final ActivityResultLauncher<String> mRequestMicrophonePermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {});
     private WeakReference<Runnable> mRequestNotificationPermissionRunnable;
 
     @Override
@@ -302,6 +304,17 @@ public class LauncherActivity extends BaseActivity {
             return fragment;
         }
         return null;
+    }
+
+    public boolean checkForMicrophonePermission() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public void askForMicrophonePermission() {
+        if (!checkForMicrophonePermission()) {
+            mRequestMicrophonePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+        }
     }
 
     private void checkNotificationPermission() {
