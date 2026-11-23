@@ -31,6 +31,22 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     public void onCreatePreferences(Bundle b, String str) {
         addPreferencesFromResource(R.xml.pref_main);
         setupNotificationRequestPreference();
+        setupMicrophoneRequestPreference();
+    }
+
+    private void setupMicrophoneRequestPreference() {
+        Preference microphonePreference = requirePreference("microphone_permission_request");
+        Activity activity = getActivity();
+        if (activity instanceof LauncherActivity) {
+            LauncherActivity launcherActivity = (LauncherActivity) activity;
+            microphonePreference.setVisible(!launcherActivity.checkForMicrophonePermission());
+            microphonePreference.setOnPreferenceClickListener(preference -> {
+                launcherActivity.askForMicrophonePermission();
+                return true;
+            });
+        } else {
+            microphonePreference.setVisible(false);
+        }
     }
 
     private void setupNotificationRequestPreference() {
@@ -51,6 +67,7 @@ public class LauncherPreferenceFragment extends PreferenceFragmentCompat impleme
     @Override
     public void onResume() {
         super.onResume();
+        if (findPreference("microphone_permission_request") != null) setupMicrophoneRequestPreference();
         SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
         if(sharedPreferences != null) sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
