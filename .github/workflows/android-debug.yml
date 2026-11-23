@@ -73,10 +73,27 @@ jobs:
           set -euo pipefail
           gradle :app_pojavlauncher:assembleDebug --no-daemon -Pandroid.injected.build.abi=arm64-v8a
 
-          APK="$(find app_pojavlauncher/build/outputs/apk -type f -name '*.apk' -print -quit)"
-          if [[ -z "$APK" || ! -s "$APK" ]]; then
-            echo "::error::Gradle completed but no APK was found under app_pojavlauncher/build/outputs/apk"
-            find app_pojavlauncher/build/outputs -maxdepth 5 -type f -print || true
+          # AGP may redirect the module build directory in this fork. Search the
+          # complete checked-out workspace instead of assuming app_pojavlauncher/build.
+          mapfile -t APK_CANDIDATES < <(
+            find "$GITHUB_WORKSPACE" \
+              -type d \( -name .git -o -name .gradle \) -prune -o \
+              -type f -name '*.apk' -print
+          )
+
+          if [[ ${#APK_CANDIDATES[@]} -eq 0 ]]; then
+            echo "::error::Gradle reported assembleDebug success, but no APK exists in the workspace."
+            echo "Build directories:"
+            find "$GITHUB_WORKSPACE" -maxdepth 5 -type d \( -name build -o -name outputs -o -name apk \) -print || true
+            echo "Recent build files:"
+            find "$GITHUB_WORKSPACE" -type f \( -name '*.aab' -o -name '*.apk' \) -print || true
+            exit 1
+          fi
+
+          printf 'Discovered APK candidate: %s\\n' "${APK_CANDIDATES[@]}"
+          APK="${APK_CANDIDATES[0]}"
+          if [[ ! -s "$APK" ]]; then
+            echo "::error::Discovered APK is empty: $APK"
             exit 1
           fi
 
