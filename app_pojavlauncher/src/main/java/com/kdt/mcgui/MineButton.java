@@ -2,13 +2,17 @@ package com.kdt.mcgui;
 
 import android.content.*;
 import android.graphics.*;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.util.*;
 
 import androidx.core.content.res.ResourcesCompat;
 
 import net.kdt.pojavlaunch.R;
 
-public class MineButton extends androidx.appcompat.widget.AppCompatButton {
+public class MineButton extends androidx.appcompat.widget.AppCompatButton implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
 	public MineButton(Context ctx) {
 		this(ctx, null);
@@ -21,7 +25,7 @@ public class MineButton extends androidx.appcompat.widget.AppCompatButton {
 
 	public void init() {
 		setTypeface(ResourcesCompat.getFont(getContext(), R.font.noto_sans_bold));
-		setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.mine_button_background, null));
+		applyGlassBackground();
 		setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen._13ssp));
 	}
 
