@@ -9,16 +9,6 @@
 
     <net.kdt.pojavlaunch.prefs.BackButtonPreference/>
 
-    <PreferenceCategory android:title="@string/pars_appearance_category">
-        <androidx.preference.SeekBarPreference
-            android:key="pars_button_radius"
-            android:title="@string/pars_button_radius_title"
-            android:summary="@string/pars_button_radius_summary"
-            android:min="4"
-            android:max="40"
-            android:defaultValue="22"
-            app:showSeekBarValue="true" />
-    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/preference_category_main_categories"
