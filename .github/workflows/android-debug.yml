@@ -90,7 +90,9 @@ jobs:
             exit 1
           fi
 
-          printf 'Discovered APK candidate: %s\\n' "${APK_CANDIDATES[@]}"
+          for APK_CANDIDATE in "${APK_CANDIDATES[@]}"; do
+            echo "Discovered APK candidate: $APK_CANDIDATE"
+          done
           APK="${APK_CANDIDATES[0]}"
           if [[ ! -s "$APK" ]]; then
             echo "::error::Discovered APK is empty: $APK"
