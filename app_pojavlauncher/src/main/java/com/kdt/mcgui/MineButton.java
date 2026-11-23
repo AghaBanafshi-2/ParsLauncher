@@ -32,14 +32,14 @@ public class MineButton extends androidx.appcompat.widget.AppCompatButton
         setTypeface(ResourcesCompat.getFont(getContext(), R.font.noto_sans_bold));
         setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen._13ssp));
-        applyGlassBackground();
+        applyRoundedBackground();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         getPreferences().registerOnSharedPreferenceChangeListener(this);
-        applyGlassBackground();
+        applyRoundedBackground();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MineButton extends androidx.appcompat.widget.AppCompatButton
     @Override
     public void onSharedPreferenceChanged(SharedPreferences preferences, String key) {
         if (PREF_BUTTON_RADIUS.equals(key)) {
-            applyGlassBackground();
+            applyRoundedBackground();
         }
     }
 
@@ -59,21 +59,19 @@ public class MineButton extends androidx.appcompat.widget.AppCompatButton
         return android.preference.PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
-    private void applyGlassBackground() {
+    private void applyRoundedBackground() {
         float density = getResources().getDisplayMetrics().density;
         int radius = getPreferences().getInt(PREF_BUTTON_RADIUS, DEFAULT_BUTTON_RADIUS);
 
-        GradientDrawable glass = new GradientDrawable();
-        glass.setShape(GradientDrawable.RECTANGLE);
-        glass.setCornerRadius(radius * density);
-        glass.setColor(Color.argb(190, 43, 27, 63));
-        glass.setStroke(Math.max(1, (int) density), Color.argb(150, 177, 132, 255));
+        GradientDrawable background = new GradientDrawable();
+        background.setShape(GradientDrawable.RECTANGLE);
+        background.setCornerRadius(radius * density);
+        background.setColor(Color.rgb(43, 27, 63));
 
-        RippleDrawable ripple = new RippleDrawable(
+        setBackground(new RippleDrawable(
                 ColorStateList.valueOf(Color.argb(65, 190, 150, 255)),
-                glass,
+                background,
                 null
-        );
-        setBackground(ripple);
+        ));
     }
 }
