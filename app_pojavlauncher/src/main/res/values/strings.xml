@@ -432,4 +432,7 @@
     <string name="newdl_extracting_native_libraries">Extracting native libraries (%d/%d)</string>
     <string name="toast_not_available_demo">This is not available in demo mode</string>
 
+
+    <string name="preference_ask_for_microphone_title">Allow microphone</string>
+    <string name="preference_ask_for_microphone_description">Click to request microphone access for voice features.</string>
 </resources>
