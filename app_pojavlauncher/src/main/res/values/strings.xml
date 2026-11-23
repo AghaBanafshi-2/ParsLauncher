@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- App name part -->
-    <string name="app_name">PojavLauncher (Minecraft: Java Edition for Android)</string>
-    <string name="app_short_name">PojavLauncher</string>
+    <string name="app_name">ParsLauncher — Minecraft Java Edition</string>
+    <string name="app_short_name">ParsLauncher</string>
 
     <!-- Action bar part -->
 
@@ -22,7 +22,7 @@
     <string name="alerttitle_installmod">Select a mod installer</string>
 
     <!-- Error messages -->
-    <string name="error_fatal">PojavLauncher has unexpectedly crashed</string>
+    <string name="error_fatal">ParsLauncher has unexpectedly crashed</string>
     <string name="error_no_version">No version!</string>
     <string name="error_show_more">Show more</string>
     <string name="error_show_less">Show less</string>
@@ -431,4 +431,7 @@
     <string name="bta_installer_nightly_versions">Nightly BTA versions</string>
     <string name="newdl_extracting_native_libraries">Extracting native libraries (%d/%d)</string>
     <string name="toast_not_available_demo">This is not available in demo mode</string>
+    <string name="pars_appearance_category">ParsLauncher appearance</string>
+    <string name="pars_button_radius_title">Button corner radius</string>
+    <string name="pars_button_radius_summary">Adjust how rounded launcher buttons look (4–40 dp).</string>
 </resources>

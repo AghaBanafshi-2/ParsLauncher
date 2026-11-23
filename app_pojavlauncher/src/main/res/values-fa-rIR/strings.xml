@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- App name part -->
-    <string name="app_name">پوجاو لانچر (ماینکرفت: جاوا ادیشن برای اندروید)</string>
-    <string name="app_short_name">پوجاو لانچر</string>
+    <string name="app_name">پارس لانچر — ماینکرفت جاوا ادیشن</string>
+    <string name="app_short_name">پارس لانچر</string>
     <!-- Action bar part -->
     <!-- Languages list part -->
     <!-- Login strings -->
@@ -14,7 +14,7 @@
     <!-- AlertDialog title -->
     <string name="alerttitle_installmod">یک نصب کننده ماد را انتخاب کنید</string>
     <!-- Error messages -->
-    <string name="error_fatal">پوجاو لانچر بصورت غیرمنتظره کرش خورد</string>
+    <string name="error_fatal">پارس لانچر به‌صورت غیرمنتظره متوقف شد</string>
     <string name="error_no_version">بدون ورژن!</string>
     <string name="error_show_more">نمایش بیشتر</string>
     <string name="error_show_less">نمایش کمتر</string>
@@ -259,4 +259,7 @@
     <string name="preference_category_java_tweaks">ترفند های جاوا</string>
     <string name="preference_category_miscellaneous">تنظیمات متفرقه</string>
     <string name="controller_button_select">انتخاب</string>
+    <string name="pars_appearance_category">ظاهر پارس لانچر</string>
+    <string name="pars_button_radius_title">گردی گوشه‌های دکمه</string>
+    <string name="pars_button_radius_summary">میزان گردی دکمه‌های لانچر را از ۴ تا ۴۰ تنظیم کنید.</string>
 </resources>
