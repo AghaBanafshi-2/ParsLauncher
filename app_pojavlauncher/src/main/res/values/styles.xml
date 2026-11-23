@@ -6,6 +6,11 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:statusBarColor">@color/background_status_bar</item>
+        <item name="colorPrimary">@color/brand_purple_dark</item>
+        <item name="colorPrimaryDark">@color/background_status_bar</item>
+        <item name="colorAccent">@color/brand_purple</item>
+        <item name="android:colorAccent">@color/brand_purple</item>
+        <item name="colorControlActivated">@color/brand_purple</item>
         <item name="android:navigationBarColor">@color/background_app</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
@@ -20,7 +25,13 @@
     </style>
 
     <style name="LauncherMenuButton" parent="Widget.AppCompat.Button">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/background_launcher_button</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:paddingStart">@dimen/_14sdp</item>
+        <item name="android:paddingEnd">@dimen/_14sdp</item>
+        <item name="android:drawableTint">@color/brand_purple</item>
+        <item name="android:layout_marginHorizontal">@dimen/_6sdp</item>
+        <item name="android:layout_marginVertical">@dimen/_3sdp</item>
     </style>
 
     <style name="LauncherMenuButton.Universal" parent="LauncherMenuButton">
